@@ -1,0 +1,84 @@
+# 🌾 PDM AI Bridge (Project "Kakasa")
+
+**Empowering Ugandan Citizens to Access the Parish Development Model (PDM) in their Local Language, Free from Middlemen.**
+
+## 📖 Overview
+The Parish Development Model (PDM) is designed to bring wealth creation to the grassroots. However, rural citizens often fall victim to middlemen and brokers who charge illegal "facilitation fees" because the citizens do not understand the requirements, the portal, or the process in English.
+
+**PDM AI Bridge** is an AI-powered, multi-lingual platform that acts as a free, truthful guide. It uses **Sunbird AI** to communicate with citizens in their mother tongue, verifies their identity via National ID, collects their documents, and routes them directly to the nearest Parish Development Representative (PDR) office—completely eliminating the need for brokers.
+
+## 🎯 Core Objectives
+1. **Zero Middlemen:** Give citizens direct, accurate information in their local language.
+2. **Pre-Town Preparation:** Warn citizens about scams *before* they travel to town.
+3. **Seamless Onboarding:** Use National IDs (NIN) to fetch user data and auto-fill forms.
+4. **Digital Document Collection:** Allow users to upload required documents via chat/web.
+5. **Smart Routing:** Automatically direct users to their specific, nearest PDR office.
+
+---
+
+## 🔄 The User Journey (How it Works)
+
+### Phase 1: Pre-Town AI Advisor (The "Truth Teller")
+*Before the citizen travels to town, they interact with the AI (via USSD/Voice).*
+1. User asks: *"What do I need to join PDM?"*
+2. **Sunbird AI** translates and replies in the local language (e.g., Luganda, Runyankole, Ateso).
+3. **Scam Warning:** The AI explicitly warns: *"PDM registration is FREE. Do not pay anyone for forms. You only need your National ID."*
+4. AI provides a checklist of preliminary documents needed for the town visit.
+
+### Phase 2: NIN Verification & Onboarding
+1. The user provides their National ID Number (NIN).
+2. The backend fetches their basic details (Name, Parish, Village) via the NIRA API (simulated in MVP).
+3. **Sunbird AI** confirms their details back to them in their local language: *"We have found your details: John Doe, from X Parish. Is this correct?"*
+
+### Phase 3: Document Collection & Routing
+1. The AI guides the user to take photos of their required documents (e.g., ID card, land title, group registration) and upload them via the chat/web interface.
+2. Using the user's parish data, the system calculates and displays the **Nearest PDR Office** in town where they should physically go to finalize the process.
+
+### Phase 4: Central Hub & Agent Evaluation
+1. All uploaded documents and user data are sent to the **Central Admin Dashboard**.
+2. PDM officials review the application.
+3. If qualified, the system triggers an automated message (translated by Sunbird AI) to the user: *"Your documents are approved. An agent will visit your village on [Date] to evaluate your project. Please prepare [Specific Items]."*
+
+---
+
+## 🛠️ Tech Stack
+
+### 🧠 AI & Localization
+* **Sunbird AI:** Core engine for Speech-to-Text (STT), Text-to-Speech (TTS), and Translation (English <-> Luganda, Runyankole, Ateso, Luo, etc.).
+* **LLM (e.g., Qwen/OpenAI API):** For conversational logic, intent recognition, and generating empathetic, scam-aware responses.
+
+### ⚙️ Backend & Database
+* **Framework:** Python (FastAPI) or Node.js (Express).
+* **Database:** PostgreSQL (Relational data for Users, PDR Offices, Applications).
+* **Cloud Storage:** AWS S3 or Cloudinary (For storing uploaded National ID photos and documents).
+
+### 📱 Frontend & Interfaces
+* **User Interface (MVP):** WhatsApp Business API (via Twilio or Meta Cloud API) OR a lightweight Mobile-Responsive Web App (React/Next.js).
+* **Admin Interface:** Web Dashboard (React + Tailwind CSS) for the Central Hub to review applications and manage agent dispatch.
+
+### 🔌 External Integrations (MVP Mockups)
+* **NIRA API:** National Identification and Registration Authority (Mocked for MVP).
+* **PDM Portal API:** Government PDM database (Mocked for MVP).
+
+---
+
+## 🏗️ System Architecture
+
+```text
+[ User (Village) ] 
+       │ (Types in Local Language via WhatsApp/Web)
+       ▼
+[ Sunbird AI Gateway ] ──(Translates to English)──> [ Backend API ]
+       ▲                                                │
+       │                                                ├──> 1. NIRA API (Fetch NIN Data)
+[ Sunbird AI Gateway ] <─(Translates to Local Lang)────┤
+       │                                                ├──> 2. Geolocation (Find Nearest PDR)
+       ▼                                                │
+[ User receives Voice/Text Reply ]                      └──> 3. Database (Save Application & Docs)
+                                                                 │
+                                                                 ▼
+                                                        [ Central Hub Dashboard ]
+                                                        (PDM Officials review & approve)
+                                                                 │
+                                                                 ▼
+                                                        [ Agent Dispatched to Village ]
