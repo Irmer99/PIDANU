@@ -119,7 +119,9 @@ async def ussd_handler(
     session = user_sessions.get(sessionId, {})
     lang = session.get("language", "eng")
     step = session.get("step", "menu")
-    data = session.get("data", {})
+    if "data" not in session:
+        session["data"] = {}
+    data = session["data"]
 
     parts = text.split("*") if text else []
     choice = parts[-1] if parts else ""
