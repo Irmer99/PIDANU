@@ -91,14 +91,24 @@ def build_document_checklist() -> str:
     )
 
 
-@router.post("")
-@router.post("/callback")
+@router.api_route("", methods=["GET", "POST"])
+@router.api_route("/callback", methods=["GET", "POST"])
 async def ussd_handler(
-    sessionId: str = Form(...),
-    serviceCode: str = Form(...),
-    phoneNumber: str = Form(...),
-    text: str = Form(""),
+    request: Request,
+    sessionId: str = Form(default=None),
+    serviceCode: str = Form(default=None),
+    phoneNumber: str = Form(default=None),
+    text: str = Form(default=""),
 ):
+    if request.method == "GET":
+        params = dict(request.query_params)
+        sessionId = params.get("sessionId", params.get("session_id", ""))
+        serviceCode = params.get("serviceCode", params.get("service_code", ""))
+        phoneNumber = params.get("phoneNumber", params.get("phone_number", params.get("phone", "")))
+        text = params.get("text", params.get("input", ""))
+
+    if not sessionId:
+        return Response(content="END Invalid request. Missing sessionId.", media_type="text/plain")
     if rate_limiter.check_ussd(phoneNumber):
         return Response(
             content="END Too many requests. Please try again later.",
