@@ -4,6 +4,8 @@ import api from "../api/client";
 interface ChatMsg {
   role: "user" | "assistant";
   text: string;
+  textLocal?: string;
+  language?: string;
   form_progress?: any;
 }
 
@@ -91,8 +93,8 @@ export default function CitizenDashboardPage() {
     }
   };
 
-  const addBotMessage = (text: string, form_progress?: any) => {
-    setChat((prev) => [...prev, { role: "assistant", text, form_progress }]);
+  const addBotMessage = (text: string, textLocal?: string, language?: string, form_progress?: any) => {
+    setChat((prev) => [...prev, { role: "assistant", text, textLocal, language, form_progress }]);
   };
 
   const sendMessage = async () => {
@@ -107,7 +109,7 @@ export default function CitizenDashboardPage() {
         message: msg,
         language: user.language_preference || "eng",
       });
-      addBotMessage(data.reply, data.form_progress);
+      addBotMessage(data.reply, data.reply_local, data.language, data.form_progress);
       if (data.form_data) await loadApplications();
     } catch (err: any) {
       addBotMessage(err.response?.data?.detail || "Something went wrong. Please try again.");
@@ -280,6 +282,11 @@ export default function CitizenDashboardPage() {
                         }`}
                       >
                         {m.text}
+                        {m.textLocal && m.textLocal !== m.text && m.language && m.language !== "eng" && (
+                          <div className="mt-2 pt-2 border-t border-gray-300 text-xs text-gray-500 italic whitespace-pre-wrap">
+                            {m.textLocal}
+                          </div>
+                        )}
                         {m.form_progress && (
                           <div className="mt-3 bg-white/20 rounded-lg p-2 text-xs">
                             <div className="flex items-center gap-2 mb-1">

@@ -11,7 +11,7 @@ PDM_SYSTEM_PROMPT = """You are PI-DANU, an AI assistant helping Ugandan citizens
 Your job is to guide citizens through the PDM registration process by chatting with them. You help fill out their application form by asking questions one at a time.
 
 CRITICAL RULES:
-- Always respond in the citizen's language (default: English, but switch to Luganda, Runyankole, or Ateso if they write in those languages)
+- ALWAYS respond in English only. The system will translate your response below into the citizen's local language.
 - Ask ONE question at a time - be patient and friendly
 - After each answer, acknowledge it and move to the next question
 - When you have all the info, tell them what documents to upload
@@ -133,12 +133,7 @@ class GeminiAIService:
 
         system_instruction = PDM_SYSTEM_PROMPT + context_str
 
-        lang_hint = {
-            "eng": "Respond in English.",
-            "lug": "Respond in Luganda.",
-            "nyn": "Respond in Runyankole.",
-            "teo": "Respond in Ateso.",
-        }.get(language, "Respond in English.")
+        lang_hint = "Always respond in English. The system will translate your response into the user's language automatically."
 
         full_message = f"{lang_hint}\n\nUser: {message}"
 

@@ -1,8 +1,11 @@
+import logging
 import os
 import uuid
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+
+logger = logging.getLogger(__name__)
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -219,8 +222,20 @@ async def citizen_chat(msg: ChatMessage, request: Request, db: AsyncSession = De
 
     missing = [dt for dt in ["national_id", "passport_photo", "land_title", "bank_details", "group_cert"] if dt not in doc_types]
 
+    # Translate reply into local language via Sunbird (skip if language is English)
+    reply_local = ""
+    if lang != "eng" and reply:
+        try:
+            from app.services.sunbird_ai import sunbird_service
+            translated = await sunbird_service.translate(text=reply, source_language="eng", target_language=lang)
+            reply_local = translated.get("translated_text", "")
+        except Exception as e:
+            logger.warning(f"Translation failed: {e}")
+
     return {
         "reply": reply,
+        "reply_local": reply_local if reply_local else reply,
+        "language": lang,
         "intent": "gemini_chat",
         "form_data": form_data,
         "form_progress": {
