@@ -77,6 +77,40 @@ export interface User {
   parish: string;
 }
 
+export interface CitizenUser {
+  id: string;
+  nin: string;
+  name: string;
+  parish: string;
+  district: string;
+}
+
+export interface CitizenProfile {
+  id: string;
+  nin: string;
+  full_name: string;
+  phone_number: string | null;
+  parish: string;
+  village: string | null;
+  district: string;
+  language_preference: string;
+  biometric_enabled: boolean;
+  created_at: string;
+}
+
+export interface CitizenRequest {
+  id: string;
+  request_code: string;
+  request_type: string;
+  description: string | null;
+  status: string;
+  parish_chief_notes: string | null;
+  submitted_via: string;
+  created_at: string;
+  updated_at: string;
+  completed_at: string | null;
+}
+
 export interface UssdLogEntry {
   timestamp: string;
   request: { text: string; sessionId: string; phoneNumber: string };

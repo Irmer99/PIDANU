@@ -15,6 +15,9 @@ import type {
   Metrics,
   MonthlyReport,
   User,
+  CitizenUser,
+  CitizenProfile,
+  CitizenRequest,
 } from "../types";
 
 const USE_MOCK = true;
@@ -214,5 +217,122 @@ export async function generateSpeech(
   language: string
 ): Promise<{ audio_url: string; duration_seconds: number | null }> {
   const { data } = await api.post("/api/chat/tts", { text, language });
+  return data;
+}
+
+// ──────────────── Citizen Auth & Profile ────────────────
+
+const MOCK_CITIZEN: CitizenUser = {
+  id: "cit-001",
+  nin: "CM800123456ABCD",
+  name: "Nakato Sarah",
+  parish: "Owino",
+  district: "Kampala",
+};
+
+const MOCK_CITIZEN_PROFILE: CitizenProfile = {
+  id: "cit-001",
+  nin: "CM800123456ABCD",
+  full_name: "Nakato Sarah",
+  phone_number: "+256701234567",
+  parish: "Owino",
+  village: "Nakivubo",
+  district: "Kampala",
+  language_preference: "en",
+  biometric_enabled: false,
+  created_at: "2025-11-15T09:00:00Z",
+};
+
+const MOCK_CITIZEN_REQUESTS: CitizenRequest[] = [
+  {
+    id: "req-001",
+    request_code: "REQ-001",
+    request_type: "birth_cert",
+    description: "Need birth certificate for school enrollment",
+    status: "approved",
+    parish_chief_notes: "Documents verified. Certificate ready for pickup.",
+    submitted_via: "ussd",
+    created_at: "2026-01-10T14:30:00Z",
+    updated_at: "2026-01-15T10:00:00Z",
+    completed_at: null,
+  },
+  {
+    id: "req-002",
+    request_code: "REQ-002",
+    request_type: "agri_inputs",
+    description: "Requesting maize seeds for this season",
+    status: "submitted",
+    parish_chief_notes: null,
+    submitted_via: "mobile",
+    created_at: "2026-07-20T08:15:00Z",
+    updated_at: "2026-07-20T08:15:00Z",
+    completed_at: null,
+  },
+];
+
+export async function citizenRegister(params: {
+  nin: string;
+  pin: string;
+  full_name: string;
+  phone_number?: string;
+  parish: string;
+  district: string;
+  language_preference?: string;
+}): Promise<{ token: string; citizen: CitizenUser }> {
+  if (USE_MOCK) {
+    return {
+      token: "mock-citizen-token",
+      citizen: { ...MOCK_CITIZEN, nin: params.nin, name: params.full_name },
+    };
+  }
+  const { data } = await api.post("/api/citizen/register", params);
+  return data;
+}
+
+export async function citizenLogin(
+  nin: string,
+  pin: string
+): Promise<{ token: string; citizen: CitizenUser }> {
+  if (USE_MOCK) {
+    if (nin && pin)
+      return { token: "mock-citizen-token", citizen: MOCK_CITIZEN };
+    throw new Error("Invalid NIN or PIN");
+  }
+  const { data } = await api.post("/api/citizen/login", { nin, pin });
+  return data;
+}
+
+export async function getCitizenProfile(): Promise<CitizenProfile> {
+  if (USE_MOCK) return MOCK_CITIZEN_PROFILE;
+  const { data } = await api.get("/api/citizen/me");
+  return data;
+}
+
+export async function getCitizenMyRequests(): Promise<CitizenRequest[]> {
+  if (USE_MOCK) return MOCK_CITIZEN_REQUESTS;
+  const { data } = await api.get("/api/citizen/my-requests");
+  return data;
+}
+
+export async function citizenSubmitRequest(params: {
+  request_type: string;
+  description: string;
+}): Promise<CitizenRequest> {
+  if (USE_MOCK) {
+    const newReq: CitizenRequest = {
+      id: "req-" + Math.random().toString(36).slice(2, 8),
+      request_code: "REQ-" + Math.floor(Math.random() * 900 + 100),
+      request_type: params.request_type,
+      description: params.description,
+      status: "submitted",
+      parish_chief_notes: null,
+      submitted_via: "mobile",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      completed_at: null,
+    };
+    return newReq;
+  }
+  const { data } = await api.post("/api/citizen/submit-request", params);
   return data;
 }
