@@ -8,6 +8,7 @@ from app.routers import (
     applications,
     auth,
     chat,
+    citizen,
     pdr_offices,
     sms,
     sync,
@@ -46,6 +47,7 @@ app.include_router(sms.router)
 app.include_router(admin_api.router)
 app.include_router(voice.router)
 app.include_router(sync.router)
+app.include_router(citizen.router)
 
 
 @app.get("/")

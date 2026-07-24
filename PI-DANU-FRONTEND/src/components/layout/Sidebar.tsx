@@ -9,7 +9,7 @@ import {
   Settings,
   ChevronLeft,
   Shield,
-  Smartphone,
+  PhoneCall,
   Mic,
 } from "lucide-react";
 
@@ -19,9 +19,10 @@ const navItems = [
   { to: "/citizens", label: "Citizens", icon: Users },
   { to: "/resources", label: "Resources", icon: Package },
   { to: "/reports", label: "Reports", icon: BarChart3 },
-  { divider: true, label: "Workflows" },
-  { to: "/ussd", label: "USSD Simulator", icon: Smartphone },
-  { to: "/advisory", label: "Voice Advisory", icon: Mic },
+  { divider: true, label: "Voice & Demos" },
+  { to: "/admin/voice-logs", label: "Voice Call Logs", icon: PhoneCall },
+  { to: "/admin/voice-simulator", label: "Voice Simulator", icon: Mic },
+  { divider: true, label: "System" },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 

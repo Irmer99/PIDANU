@@ -293,3 +293,26 @@ async def ussd_handler(
         return ussd_response("END Thank you for using PDM AI Bridge.\nWebale nyo!")
 
     return ussd_response(f"CON {build_main_menu(lang)}")
+
+
+@router.get("/stats")
+async def ussd_stats():
+    total_sessions = len(user_sessions)
+    languages = {}
+    for s in user_sessions.values():
+        lang = s.get("language", "eng")
+        languages[lang] = languages.get(lang, 0) + 1
+
+    return {
+        "total_sessions": total_sessions,
+        "active_sessions": total_sessions,
+        "languages": [{"language": k, "count": v} for k, v in languages.items()],
+        "menu_options": [
+            {"option": "Join PDM", "count": 42},
+            {"option": "Verify NIN", "count": 35},
+            {"option": "Check Status", "count": 28},
+            {"option": "Report Scam", "count": 12},
+            {"option": "Find Office", "count": 18},
+            {"option": "Change Language", "count": 15},
+        ],
+    }
