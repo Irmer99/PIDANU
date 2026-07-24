@@ -1,8 +1,9 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime
 
 from app.database import get_db
 from app.models.user import User
@@ -73,6 +74,137 @@ async def get_metrics(db: AsyncSession = Depends(get_db)):
         resources_distributed=resources_distributed,
         requests_by_type=requests_by_type,
         monthly_trend=monthly_trend,
+    )
+
+
+@router.get("/requests", response_model=ServiceRequestListResponse)
+async def list_requests(
+    status: Optional[str] = None,
+    type: Optional[str] = None,
+    skip: int = 0,
+    limit: int = 50,
+    db: AsyncSession = Depends(get_db),
+):
+    query = select(Application)
+    count_q = select(func.count(Application.id))
+
+    if status and status != "all":
+        query = query.where(Application.status == status)
+        count_q = count_q.where(Application.status == status)
+    if type and type != "all":
+        query = query.where(Application.service_type == type)
+        count_q = count_q.where(Application.service_type == type)
+
+    total_result = await db.execute(count_q)
+    total = total_result.scalar() or 0
+
+    result = await db.execute(query.offset(skip).limit(limit))
+    apps = result.scalars().all()
+
+    data = []
+    for a in apps:
+        user_result = await db.execute(select(User).where(User.id == a.user_id))
+        user = user_result.scalars().first()
+        data.append(ServiceRequestResponse(
+            id=str(a.id),
+            request_code=f"PI-2026-{str(a.id)[:8]}",
+            citizen_id=str(a.user_id),
+            citizen_nin=user.nin if user else None,
+            citizen_name=user.full_name if user else None,
+            request_type=a.service_type,
+            description=a.notes,
+            status=a.status,
+            priority="medium",
+            parish_chief_notes=a.notes,
+            submitted_via="ussd",
+            created_at=a.created_at,
+            updated_at=a.updated_at,
+            completed_at=a.reviewed_at,
+        ))
+
+    return ServiceRequestListResponse(data=data, total=total)
+
+
+@router.get("/requests/{request_id}", response_model=ServiceRequestResponse)
+async def get_request(request_id: str, db: AsyncSession = Depends(get_db)):
+    from uuid import UUID
+    try:
+        uid = UUID(request_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid request ID")
+
+    result = await db.execute(select(Application).where(Application.id == uid))
+    app = result.scalars().first()
+    if not app:
+        raise HTTPException(status_code=404, detail="Request not found")
+
+    user_result = await db.execute(select(User).where(User.id == app.user_id))
+    user = user_result.scalars().first()
+
+    return ServiceRequestResponse(
+        id=str(app.id),
+        request_code=f"PI-2026-{str(app.id)[:8]}",
+        citizen_id=str(app.user_id),
+        citizen_nin=user.nin if user else None,
+        citizen_name=user.full_name if user else None,
+        request_type=app.service_type,
+        description=app.notes,
+        status=app.status,
+        priority="medium",
+        parish_chief_notes=app.notes,
+        submitted_via="ussd",
+        created_at=app.created_at,
+        updated_at=app.updated_at,
+        completed_at=app.reviewed_at,
+    )
+
+
+@router.post("/requests/{request_id}/action", response_model=ServiceRequestResponse)
+async def act_on_request(
+    request_id: str,
+    req: RequestActionRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    from uuid import UUID
+    try:
+        uid = UUID(request_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid request ID")
+
+    result = await db.execute(select(Application).where(Application.id == uid))
+    app = result.scalars().first()
+    if not app:
+        raise HTTPException(status_code=404, detail="Request not found")
+
+    if req.action == "approve":
+        app.status = "approved"
+    elif req.action == "reject":
+        app.status = "rejected"
+    else:
+        raise HTTPException(status_code=400, detail="Invalid action")
+
+    app.notes = req.notes or app.notes
+    app.reviewed_at = datetime.utcnow()
+    await db.flush()
+
+    user_result = await db.execute(select(User).where(User.id == app.user_id))
+    user = user_result.scalars().first()
+
+    return ServiceRequestResponse(
+        id=str(app.id),
+        request_code=f"PI-2026-{str(app.id)[:8]}",
+        citizen_id=str(app.user_id),
+        citizen_nin=user.nin if user else None,
+        citizen_name=user.full_name if user else None,
+        request_type=app.service_type,
+        description=app.notes,
+        status=app.status,
+        priority="medium",
+        parish_chief_notes=app.notes,
+        submitted_via="ussd",
+        created_at=app.created_at,
+        updated_at=app.updated_at,
+        completed_at=app.reviewed_at,
     )
 
 

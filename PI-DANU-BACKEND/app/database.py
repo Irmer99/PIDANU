@@ -3,18 +3,19 @@ from sqlalchemy.orm import DeclarativeBase
 
 from app.config import settings
 
-if not settings.DATABASE_URL:
-    raise ValueError(
-        "DATABASE_URL is not set. Please configure it in your .env file. "
-        "For Supabase: Go to Settings > Database > Connection string > URI "
-        "and use the 'Transaction' mode pooler URL."
-    )
+_db_url = settings.DATABASE_URL
+if not _db_url:
+    _db_url = "sqlite+aiosqlite:///./pi_danu.db"
+elif _db_url.startswith("postgresql://"):
+    _db_url = _db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+elif _db_url.startswith("postgres://"):
+    _db_url = _db_url.replace("postgres://", "postgresql+asyncpg://", 1)
 
 engine = create_async_engine(
-    settings.DATABASE_URL,
+    _db_url,
     echo=settings.DEBUG,
-    pool_size=5,
-    max_overflow=10,
+    pool_size=5 if "sqlite" not in _db_url else 0,
+    max_overflow=10 if "sqlite" not in _db_url else 0,
 )
 async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 

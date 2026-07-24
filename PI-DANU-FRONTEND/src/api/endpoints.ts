@@ -35,7 +35,7 @@ export async function login(pin: string): Promise<{ token: string; user: User }>
 export async function getMetrics(): Promise<Metrics> {
   if (USE_MOCK) return mockMetrics;
   const { data } = await api.get("/api/admin/metrics");
-  return data.data;
+  return data;
 }
 
 export async function getRequests(params?: {
@@ -56,15 +56,15 @@ export async function getRequests(params?: {
 }
 
 export async function getRequest(
-  id: number
+  id: string
 ): Promise<ServiceRequest> {
   if (USE_MOCK) return mockRequests.find((r) => r.id === id)!;
   const { data } = await api.get(`/api/admin/requests/${id}`);
-  return data.data;
+  return data;
 }
 
 export async function actOnRequest(
-  id: number,
+  id: string,
   action: "approve" | "reject",
   notes: string
 ): Promise<ServiceRequest> {
@@ -79,7 +79,7 @@ export async function actOnRequest(
     action,
     notes,
   });
-  return data.data;
+  return data;
 }
 
 export async function getCitizens(
@@ -113,7 +113,7 @@ export async function getCitizen(
     return { citizen, requests, resources: [] };
   }
   const { data } = await api.get(`/api/admin/citizens/${nin}`);
-  return data.data;
+  return data;
 }
 
 export async function getResources(): Promise<ResourceAllocation[]> {
@@ -123,7 +123,7 @@ export async function getResources(): Promise<ResourceAllocation[]> {
 }
 
 export async function distributeResource(
-  resourceId: number,
+  resourceId: string,
   quantity: number,
   beneficiaryIds: number[]
 ): Promise<ResourceAllocation> {
@@ -142,7 +142,7 @@ export async function distributeResource(
     quantity,
     beneficiary_ids: beneficiaryIds,
   });
-  return data.data;
+  return data;
 }
 
 export async function getAuditLogs(
@@ -162,5 +162,5 @@ export async function getMonthlyReport(
   const { data } = await api.get("/api/admin/reports/monthly", {
     params: { month, year },
   });
-  return data.data;
+  return data;
 }

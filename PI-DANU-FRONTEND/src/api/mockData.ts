@@ -24,8 +24,12 @@ function generatePhone(): string {
 const firstNames = ["Okello", "Apio", "Ochieng", "Nambi", "Kizza", "Namutebi", "Otieno", "Nambogo", "Wasswa", "Nakato", "Tumusiime", "Auma", "Byaruhanga", "Kabanda", "Lukwago", "Mugisha", "Nansubuga", "Ssemakula", "Waiswa", "Namukasa"];
 const lastNames = ["John", "Sarah", "Peter", "Grace", "David", "Mary", "James", "Joyce", "Robert", "Agnes", "Charles", "Florence", "Joseph", "Catherine", "Stephen", "Esther", "Samuel", "Patricia", "Daniel", "Harriet"];
 
+function uid(): string {
+  return "xxxxxxxx-xxxx-4xxx".replace(/x/g, () => Math.floor(Math.random() * 16).toString(16));
+}
+
 export const mockCitizens: Citizen[] = Array.from({ length: 50 }, (_, i) => ({
-  id: i + 1,
+  id: uid(),
   nin: generateNIN(),
   phone_number: generatePhone(),
   full_name: `${pick(firstNames)} ${pick(lastNames)}`,
@@ -55,7 +59,7 @@ export const mockRequests: ServiceRequest[] = Array.from({ length: 30 }, (_, i) 
   const citizen = pick(mockCitizens);
   const createdAt = randomDate(new Date("2026-05-01"), new Date("2026-07-20"));
   return {
-    id: i + 1,
+    id: uid(),
     request_code: `PI-2026-${String(i + 1).padStart(4, "0")}`,
     citizen_id: citizen.id,
     citizen_nin: citizen.nin,
@@ -73,25 +77,25 @@ export const mockRequests: ServiceRequest[] = Array.from({ length: 30 }, (_, i) 
 });
 
 export const mockResources: ResourceAllocation[] = [
-  { id: 1, resource_type: "Maize Seeds (kg)", quantity: 500, parish: "Owino", allocation_date: "2026-07-01", distribution_status: "partially_distributed", distributed_count: 320, beneficiaries: [1, 5, 12, 23, 45, 8, 14, 22] },
-  { id: 2, resource_type: "Fertilizer (bags)", quantity: 200, parish: "Laroo", allocation_date: "2026-07-01", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
-  { id: 3, resource_type: "Hoes", quantity: 150, parish: "Bwama", allocation_date: "2026-06-15", distribution_status: "fully_distributed", distributed_count: 150, beneficiaries: [3, 7, 11, 19, 25, 31, 38, 42] },
-  { id: 4, resource_type: "Bean Seeds (kg)", quantity: 300, parish: "Kanyumu", allocation_date: "2026-07-10", distribution_status: "partially_distributed", distributed_count: 120, beneficiaries: [2, 9, 16, 28] },
-  { id: 5, resource_type: "Spray Pumps", quantity: 50, parish: "Owino", allocation_date: "2026-06-20", distribution_status: "partially_distributed", distributed_count: 30, beneficiaries: [4, 13, 21, 33, 41] },
-  { id: 6, resource_type: "Rice Seeds (kg)", quantity: 400, parish: "Laroo", allocation_date: "2026-07-05", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
-  { id: 7, resource_type: "Drip Irrigation Kits", quantity: 25, parish: "Bwama", allocation_date: "2026-06-25", distribution_status: "partially_distributed", distributed_count: 18, beneficiaries: [6, 15, 27, 35] },
-  { id: 8, resource_type: "Hand Trowels", quantity: 200, parish: "Kanyumu", allocation_date: "2026-07-15", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
-  { id: 9, resource_type: "NPK Fertilizer (kg)", quantity: 350, parish: "Owino", allocation_date: "2026-07-01", distribution_status: "partially_distributed", distributed_count: 210, beneficiaries: [10, 18, 24, 36, 44, 48] },
-  { id: 10, resource_type: "Cassava Cuttings", quantity: 600, parish: "Laroo", allocation_date: "2026-07-12", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
+  { id: uid(), resource_type: "Maize Seeds (kg)", quantity: 500, parish: "Owino", allocation_date: "2026-07-01", distribution_status: "partially_distributed", distributed_count: 320, beneficiaries: [1, 5, 12, 23, 45, 8, 14, 22] },
+  { id: uid(), resource_type: "Fertilizer (bags)", quantity: 200, parish: "Laroo", allocation_date: "2026-07-01", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
+  { id: uid(), resource_type: "Hoes", quantity: 150, parish: "Bwama", allocation_date: "2026-06-15", distribution_status: "fully_distributed", distributed_count: 150, beneficiaries: [3, 7, 11, 19, 25, 31, 38, 42] },
+  { id: uid(), resource_type: "Bean Seeds (kg)", quantity: 300, parish: "Kanyumu", allocation_date: "2026-07-10", distribution_status: "partially_distributed", distributed_count: 120, beneficiaries: [2, 9, 16, 28] },
+  { id: uid(), resource_type: "Spray Pumps", quantity: 50, parish: "Owino", allocation_date: "2026-06-20", distribution_status: "partially_distributed", distributed_count: 30, beneficiaries: [4, 13, 21, 33, 41] },
+  { id: uid(), resource_type: "Rice Seeds (kg)", quantity: 400, parish: "Laroo", allocation_date: "2026-07-05", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
+  { id: uid(), resource_type: "Drip Irrigation Kits", quantity: 25, parish: "Bwama", allocation_date: "2026-06-25", distribution_status: "partially_distributed", distributed_count: 18, beneficiaries: [6, 15, 27, 35] },
+  { id: uid(), resource_type: "Hand Trowels", quantity: 200, parish: "Kanyumu", allocation_date: "2026-07-15", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
+  { id: uid(), resource_type: "NPK Fertilizer (kg)", quantity: 350, parish: "Owino", allocation_date: "2026-07-01", distribution_status: "partially_distributed", distributed_count: 210, beneficiaries: [10, 18, 24, 36, 44, 48] },
+  { id: uid(), resource_type: "Cassava Cuttings", quantity: 600, parish: "Laroo", allocation_date: "2026-07-12", distribution_status: "allocated", distributed_count: 0, beneficiaries: [] },
 ];
 
 const actions = ["request_submitted", "request_approved", "request_rejected", "request_completed", "resource_distributed", "citizen_verified", "status_check"];
 
 export const mockAuditLogs: AuditLog[] = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
+  id: uid(),
   action: pick(actions),
   entity_type: pick(["service_request", "resource_allocation", "citizen"]),
-  entity_id: Math.floor(Math.random() * 30) + 1,
+  entity_id: uid(),
   actor_phone: generatePhone(),
   actor_role: pick(["citizen", "parish_chief", "system"]),
   details: { notes: pick(["Auto-generated", "Verified by local council", "Urgent priority", "Pending review", ""]) },

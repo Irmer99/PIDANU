@@ -35,7 +35,7 @@ export default function RequestsPage() {
     setLoading(false);
   };
 
-  const handleAction = async (id: number, action: "approve" | "reject", notes: string) => {
+  const handleAction = async (id: string, action: "approve" | "reject", notes: string) => {
     await actOnRequest(id, action, notes);
     toast.success(`Request ${action === "approve" ? "approved" : "rejected"}`);
     setSelectedRequest(null);

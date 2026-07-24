@@ -1,5 +1,5 @@
 export interface Citizen {
-  id: number;
+  id: string;
   nin: string;
   phone_number: string;
   full_name: string;
@@ -13,14 +13,14 @@ export interface Citizen {
 }
 
 export interface ServiceRequest {
-  id: number;
+  id: string;
   request_code: string;
-  citizen_id: number;
+  citizen_id: string;
   citizen_nin: string;
   citizen_name: string;
-  request_type: "birth_cert" | "land_permit" | "agri_inputs" | "infra_report";
+  request_type: "birth_cert" | "land_permit" | "agri_inputs" | "infra_report" | string;
   description: string;
-  status: "submitted" | "under_review" | "approved" | "rejected" | "completed";
+  status: "submitted" | "under_review" | "approved" | "rejected" | "completed" | string;
   priority: "low" | "medium" | "high" | "urgent";
   parish_chief_notes: string;
   submitted_via: "ussd" | "sms" | "admin" | "voice";
@@ -30,21 +30,21 @@ export interface ServiceRequest {
 }
 
 export interface ResourceAllocation {
-  id: number;
+  id: string;
   resource_type: string;
   quantity: number;
   parish: string;
   allocation_date: string;
-  distribution_status: "allocated" | "partially_distributed" | "fully_distributed";
+  distribution_status: "allocated" | "partially_distributed" | "fully_distributed" | string;
   distributed_count: number;
   beneficiaries: number[];
 }
 
 export interface AuditLog {
-  id: number;
+  id: string;
   action: string;
   entity_type: string;
-  entity_id: number;
+  entity_id: string;
   actor_phone: string;
   actor_role: string;
   details: Record<string, unknown>;

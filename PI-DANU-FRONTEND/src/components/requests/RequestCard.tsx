@@ -6,7 +6,7 @@ import { X } from "lucide-react";
 interface RequestCardProps {
   request: ServiceRequest;
   onClose: () => void;
-  onAction: (id: number, action: "approve" | "reject", notes: string) => void;
+  onAction: (id: string, action: "approve" | "reject", notes: string) => void;
 }
 
 export default function RequestCard({ request, onClose, onAction }: RequestCardProps) {
