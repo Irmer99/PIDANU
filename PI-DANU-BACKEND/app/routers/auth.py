@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.config import settings
+from app.schemas.admin import PinLoginRequest, PinLoginResponse
 from app.schemas.auth import LoginRequest, TokenResponse
 from app.utils.auth import create_access_token, hash_password, verify_password
 
@@ -12,6 +13,12 @@ ADMIN_USERS = {
         "hashed_password": hash_password(settings.ADMIN_PASSWORD),
         "role": "admin",
     }
+}
+
+PIN_USERS = {
+    "1234": {"name": "Parish Chief Owino", "parish": "Owino", "role": "parish_chief"},
+    "5678": {"name": "Parish Chief Laroo", "parish": "Laroo", "role": "parish_chief"},
+    "0000": {"name": "Admin User", "parish": "All", "role": "admin"},
 }
 
 
@@ -28,3 +35,18 @@ async def login(req: LoginRequest):
         data={"sub": req.email, "role": admin["role"]}
     )
     return TokenResponse(access_token=access_token)
+
+
+@router.post("/pin", response_model=PinLoginResponse)
+async def pin_login(req: PinLoginRequest):
+    user = PIN_USERS.get(req.pin)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid PIN")
+
+    access_token = create_access_token(
+        data={"sub": user["name"], "role": user["role"], "parish": user["parish"]}
+    )
+    return PinLoginResponse(
+        token=access_token,
+        user={"name": user["name"], "parish": user["parish"]},
+    )

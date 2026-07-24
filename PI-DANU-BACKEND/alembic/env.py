@@ -8,7 +8,17 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from app.config import settings
 from app.database import Base
-from app.models import AgentDispatch, Application, Document, PDROffice, User
+from app.models import (
+    AgentDispatch,
+    Application,
+    AuditLog,
+    Document,
+    MonthlySnapshot,
+    PDROffice,
+    ResourceAllocation,
+    AdminUser,
+    User,
+)
 
 config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)

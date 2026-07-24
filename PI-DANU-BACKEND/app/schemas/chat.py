@@ -56,6 +56,7 @@ class ConverseRequest(BaseModel):
     session_id: Optional[str] = None
     language_preference: Optional[str] = None
     audio_data: Optional[str] = None
+    phone_number: Optional[str] = None
 
 
 class ConverseResponse(BaseModel):

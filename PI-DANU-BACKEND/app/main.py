@@ -2,14 +2,27 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import admin, applications, auth, chat, pdr_offices, users
+from app.routers import (
+    admin,
+    admin_api,
+    applications,
+    auth,
+    chat,
+    pdr_offices,
+    sms,
+    sync,
+    users,
+    ussd,
+    voice,
+)
 
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=(
-        "PDM AI Bridge - Empowering Ugandan citizens to access the Parish "
-        "Development Model in their local language, free from middlemen. "
+        "PI-DANU - Decentralised Governance & Citizen Inclusion in Public Service Delivery. "
+        "Empowering Ugandan citizens to access the Parish Development Model via USSD, SMS, "
+        "and Voice in their local language. "
         "Powered by Sunbird AI for translation, speech-to-text, and text-to-speech."
     ),
 )
@@ -28,6 +41,11 @@ app.include_router(users.router)
 app.include_router(applications.router)
 app.include_router(admin.router)
 app.include_router(pdr_offices.router)
+app.include_router(ussd.router)
+app.include_router(sms.router)
+app.include_router(admin_api.router)
+app.include_router(voice.router)
+app.include_router(sync.router)
 
 
 @app.get("/")
