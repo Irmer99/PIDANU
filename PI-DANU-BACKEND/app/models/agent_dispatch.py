@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from app.types import GUID as UUID
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -11,9 +11,9 @@ from app.database import Base
 class AgentDispatch(Base):
     __tablename__ = "agent_dispatches"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(), primary_key=True, default=uuid.uuid4)
     application_id = Column(
-        UUID(as_uuid=True), ForeignKey("applications.id"), nullable=False
+        UUID(), ForeignKey("applications.id"), nullable=False
     )
     agent_name = Column(String(255), nullable=False)
     agent_phone = Column(String(20), nullable=True)

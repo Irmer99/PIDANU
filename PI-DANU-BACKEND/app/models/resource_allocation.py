@@ -2,7 +2,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Float, Integer, String
-from sqlalchemy.dialects.postgresql import JSON, UUID
+from sqlalchemy import JSON
+from app.types import GUID
 
 from app.database import Base
 
@@ -10,7 +11,7 @@ from app.database import Base
 class ResourceAllocation(Base):
     __tablename__ = "resource_allocations"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(GUID(), primary_key=True, default=uuid.uuid4)
     resource_type = Column(String(100), nullable=False)
     quantity = Column(Integer, nullable=False)
     parish = Column(String(255), nullable=False)

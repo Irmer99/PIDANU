@@ -1,7 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, Float, String
-from sqlalchemy.dialects.postgresql import UUID
+from app.types import GUID as UUID
 
 from app.database import Base
 
@@ -9,7 +9,7 @@ from app.database import Base
 class PDROffice(Base):
     __tablename__ = "pdr_offices"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(), primary_key=True, default=uuid.uuid4)
     name = Column(String(255), nullable=False)
     parish = Column(String(255), nullable=False)
     sub_county = Column(String(255), nullable=True)

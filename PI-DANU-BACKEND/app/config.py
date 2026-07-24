@@ -36,6 +36,9 @@ class Settings(BaseSettings):
     ADMIN_EMAIL: str = "admin@pdm.go.ug"
     ADMIN_PASSWORD: str = "change-this-password"
 
+    # Gemini AI
+    GEMINI_API_KEY: str = ""
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

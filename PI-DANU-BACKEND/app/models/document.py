@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import Column, DateTime, ForeignKey, String
-from sqlalchemy.dialects.postgresql import UUID
+from app.types import GUID as UUID
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -11,9 +11,9 @@ from app.database import Base
 class Document(Base):
     __tablename__ = "documents"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = Column(UUID(), primary_key=True, default=uuid.uuid4)
     application_id = Column(
-        UUID(as_uuid=True), ForeignKey("applications.id"), nullable=False
+        UUID(), ForeignKey("applications.id"), nullable=False
     )
     file_url = Column(String(500), nullable=False)
     file_key = Column(String(500), nullable=True)
