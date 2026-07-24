@@ -76,3 +76,37 @@ export interface User {
   name: string;
   parish: string;
 }
+
+export interface UssdLogEntry {
+  timestamp: string;
+  request: { text: string; sessionId: string; phoneNumber: string };
+  response: string;
+}
+
+export interface ConverseResult {
+  reply_text: string;
+  reply_local: string;
+  detected_language: string;
+  intent: string;
+  audio_url: string | null;
+  user_id: string | null;
+}
+
+export interface PipelineStep {
+  id: string;
+  label: string;
+  status: "pending" | "processing" | "completed" | "error";
+  input?: string;
+  output?: string;
+  detail?: string;
+}
+
+export interface ConversationEntry {
+  id: string;
+  user_input: string;
+  input_type: "text" | "audio";
+  language_preference: string;
+  result: ConverseResult | null;
+  steps: PipelineStep[];
+  timestamp: string;
+}
