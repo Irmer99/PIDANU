@@ -10,8 +10,8 @@ interface AppState {
   sidebarOpen: boolean;
   toggleSidebar: () => void;
 
-  selectedRequestId: number | null;
-  setSelectedRequestId: (id: number | null) => void;
+  selectedRequestId: string | null;
+  setSelectedRequestId: (id: string | null) => void;
   selectedCitizenNin: string | null;
   setSelectedCitizenNin: (nin: string | null) => void;
 }

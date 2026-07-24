@@ -8,6 +8,8 @@ import CitizensPage from "./pages/CitizensPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ReportsPage from "./pages/ReportsPage";
 import SettingsPage from "./pages/SettingsPage";
+import UssdSimulatorPage from "./pages/UssdSimulatorPage";
+import AdvisoryPage from "./pages/AdvisoryPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
@@ -31,6 +33,8 @@ export default function App() {
           <Route path="/citizens" element={<CitizensPage />} />
           <Route path="/resources" element={<ResourcesPage />} />
           <Route path="/reports" element={<ReportsPage />} />
+          <Route path="/ussd" element={<UssdSimulatorPage />} />
+          <Route path="/advisory" element={<AdvisoryPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Route>

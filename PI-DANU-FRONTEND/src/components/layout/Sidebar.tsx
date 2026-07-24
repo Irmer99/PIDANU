@@ -9,6 +9,8 @@ import {
   Settings,
   ChevronLeft,
   Shield,
+  Smartphone,
+  Mic,
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +19,9 @@ const navItems = [
   { to: "/citizens", label: "Citizens", icon: Users },
   { to: "/resources", label: "Resources", icon: Package },
   { to: "/reports", label: "Reports", icon: BarChart3 },
+  { divider: true, label: "Workflows" },
+  { to: "/ussd", label: "USSD Simulator", icon: Smartphone },
+  { to: "/advisory", label: "Voice Advisory", icon: Mic },
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -50,22 +55,32 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                isActive
-                  ? "bg-white/20 text-white"
-                  : "text-white/70 hover:bg-white/10 hover:text-white"
-              } ${!sidebarOpen ? "justify-center" : ""}`
-            }
-          >
-            <item.icon className="h-5 w-5 shrink-0" />
-            {sidebarOpen && <span>{item.label}</span>}
-          </NavLink>
-        ))}
+        {navItems.map((item, i) =>
+          "divider" in item ? (
+            sidebarOpen ? (
+              <p key={`div-${i}`} className="px-3 pt-4 pb-1 text-[10px] font-semibold uppercase tracking-wider text-white/40">
+                {item.label}
+              </p>
+            ) : (
+              <hr key={`div-${i}`} className="my-3 border-white/10" />
+            )
+          ) : (
+            <NavLink
+              key={item.to}
+              to={item.to!}
+              className={({ isActive }) =>
+                `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  isActive
+                    ? "bg-white/20 text-white"
+                    : "text-white/70 hover:bg-white/10 hover:text-white"
+                } ${!sidebarOpen ? "justify-center" : ""}`
+              }
+            >
+              <item.icon className="h-5 w-5 shrink-0" />
+              {sidebarOpen && <span>{item.label}</span>}
+            </NavLink>
+          )
+        )}
       </nav>
 
       {/* Footer */}

@@ -164,3 +164,55 @@ export async function getMonthlyReport(
   });
   return data;
 }
+
+export async function simulateUssd(params: {
+  sessionId: string;
+  phoneNumber: string;
+  text: string;
+  serviceCode?: string;
+}): Promise<string> {
+  const formData = new URLSearchParams();
+  formData.append("sessionId", params.sessionId);
+  formData.append("phoneNumber", params.phoneNumber);
+  formData.append("text", params.text);
+  formData.append("serviceCode", params.serviceCode || "*384*01#");
+  const { data } = await api.post("/api/ussd/callback", formData, {
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  });
+  return typeof data === "string" ? data : data.detail || JSON.stringify(data);
+}
+
+export async function converse(params: {
+  message: string;
+  language_preference?: string;
+  audio_data?: string;
+  user_id?: string;
+  phone_number?: string;
+}): Promise<import("../types").ConverseResult> {
+  const { data } = await api.post("/api/chat/converse", params);
+  return data;
+}
+
+export async function translateText(params: {
+  text: string;
+  source_language: string;
+  target_language: string;
+}): Promise<{ translated_text: string; source_language: string; target_language: string }> {
+  const { data } = await api.post("/api/chat/translate", params);
+  return data;
+}
+
+export async function detectLanguage(
+  text: string
+): Promise<{ language_code: string; language_name: string; confidence: number }> {
+  const { data } = await api.post("/api/chat/detect-language", { text });
+  return data;
+}
+
+export async function generateSpeech(
+  text: string,
+  language: string
+): Promise<{ audio_url: string; duration_seconds: number | null }> {
+  const { data } = await api.post("/api/chat/tts", { text, language });
+  return data;
+}
