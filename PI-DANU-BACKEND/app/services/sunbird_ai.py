@@ -62,7 +62,7 @@ class SunbirdAIService:
         source_language: str = "eng",
         target_language: str = "lug",
     ) -> dict:
-        url = f"{self.base_url}/tasks/nllb_translate"
+        url = f"{self.base_url}/tasks/translate"
         payload = {
             "text": text,
             "source_language": source_language,
@@ -74,8 +74,9 @@ class SunbirdAIService:
             )
             response.raise_for_status()
             data = response.json()
+            output = data.get("output") or {}
             return {
-                "translated_text": data.get("translation", ""),
+                "translated_text": output.get("translated_text") or data.get("translation", ""),
                 "source_language": source_language,
                 "target_language": target_language,
             }
@@ -130,13 +131,24 @@ class SunbirdAIService:
             response = await client.post(
                 url, json=payload, headers=self._get_headers()
             )
-            response.raise_for_status()
             data = response.json()
+            output = data.get("output", {})
+            if output.get("Error") or response.status_code != 200:
+                logger.warning(f"TTS /tasks/tts failed: {output.get('Error', 'unknown')}, trying /tasks/modal/tts")
+                modal_url = f"{self.base_url}/tasks/modal/tts"
+                modal_payload = {"text": text, "language": language}
+                resp2 = await client.post(
+                    modal_url, json=modal_payload, headers=self._get_headers()
+                )
+                data = resp2.json()
+                if resp2.status_code != 200 or data.get("error"):
+                    logger.error(f"TTS modal also failed: {data}")
+                    return {"audio_url": "", "duration_seconds": None}
+                audio_url = data.get("audio_url") or data.get("output", {}).get("audio_url", "")
+                return {"audio_url": audio_url, "duration_seconds": data.get("duration_seconds")}
             return {
-                "audio_url": data.get("output", {}).get("audio_url", ""),
-                "duration_seconds": data.get("output", {}).get(
-                    "duration_seconds", None
-                ),
+                "audio_url": output.get("audio_url", ""),
+                "duration_seconds": output.get("duration_seconds", None),
             }
 
 
